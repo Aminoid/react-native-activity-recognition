@@ -28,6 +28,7 @@ Make alterations to the following files in your project:
 ...
 include ':react-native-activity-recognition'
 project(':react-native-activity-recognition').projectDir = new File(settingsDir, '../node_modules/react-native-activity-recognition/android')
+...
 ```
 
 #### `android/app/build.gradle`
@@ -37,38 +38,103 @@ project(':react-native-activity-recognition').projectDir = new File(settingsDir,
 dependencies {
     ...
     compile project(':react-native-activity-recognition')
+    ...
 }
 ```
 
-#### `android/.../MainActivity.java`
+#### `android/app/src/.../MainApplication.java`
 
 ```java
 import com.xebia.activityrecognition.RNActivityRecognitionPackage;  // <--- add import
 
-public class MainActivity extends ReactActivity {
+public class MainApplication extends Application implements ReactApplication {
     // ...
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-        new MainReactPackage(),                                     // <--- add comma
-        new RNActivityRecognitionPackage()                          // <--- add package
-      );
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            // ...
+            new RNActivityRecognitionPackage()                      // <--- add package
+        );
     }
+```
+
+#### `android/app/src/main/AndroidManifest.xml`
+
+```xml
+...
+<application ...>
+    ...
+    <service android:name="com.xebia.activityrecognition.DetectionService"/>
+    ...
+</application>
+...
 ```
 
 ## Usage
 
-### Imports
-
 ```js
-import { DeviceEventEmitter } from 'react-native'
-import { ActivityRecognition } from 'NativeModules'
-```
+import ActivityRecognition from 'react-native-activity-recognition'
 
+...
 
-### Accelerometer
-```js
-ActivityRecognition.start(100)
-DeviceEventEmitter.addListener('DetectedActivity', ({ type, confidence }) => { ... })
+// Start activity detection
+ActivityRecognition.start(1000) // detection interval in ms
+
+// Subscribe to updates
+this.unsubscribe = ActivityRecognition.subscribe(detectedActivities => {
+  const mostProbable = ActivityRecognition.getMostProbableActivity(detectedActivities) // => { type: 'STILL', confidence: 77 }
+})
+
+...
+
+// Stop activity detection and remove the listener
 ActivityRecognition.stop()
+this.unsubscribe()
 ```
+
+`detectedActivities` is an object with keys for each detected activity, each of which have an integer value from 0 to 100
+indicating the likelihood that the user is performing this activity. For example:
+
+```js
+{
+  ON_FOOT: 8,
+  IN_VEHICLE: 15,
+  WALKING: 8,
+  STILL: 77
+}
+```
+
+The following activity types are supported:
+
+- IN_VEHICLE
+- ON_BICYCLE
+- ON_FOOT
+- RUNNING
+- WALKING
+- STILL
+- TILTING
+- UNKNOWN
+
+## Methods
+
+### `start(detectionIntervalMillis: number): void`
+Starts listening for activity updates. The detectionIntervalMillis is passed to ActivityRecognitionApi.requestActivityUpdates().
+
+### `subscribe(callback: Function): Function`
+Subscribes a callback function to be invoked on each activity update. Returns a function which can be called in order to unsubscribe.
+The update callback will be invoked with an object representing the detected activities and their confidence percentage.
+
+### `stop(): void`
+Stops listening for activity updates.
+
+### `getMostProbableActivity(detectedActivities: Object): Object`
+Util function to determine the most probable activity `type` and its `confidence` percentage based on the detectedActivities object used in the `subscribe` callback.
+For example: `{ type: 'STILL', confidence: 77 }`
+
+## Credits / prior art
+
+The following projects were very helpful in developing this library:
+
+- https://github.com/googlesamples/android-play-location
+- https://bitbucket.org/timhagn/react-native-google-locations
