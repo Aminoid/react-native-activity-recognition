@@ -12,7 +12,7 @@ ActivityRecognition.getMostProbableActivity = function getMostProbableActivity(d
   })
   return {
     type: mostProbableType,
-    confidence: detectedActivities[mostProbableType]),
+    confidence: detectedActivities[mostProbableType],
   }
 }
 
