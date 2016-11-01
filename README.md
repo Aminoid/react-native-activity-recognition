@@ -1,5 +1,7 @@
 # react-native-activity-recognition
 
+[![npm version][npm shield]][npm url]
+
 React Native wrapper for the [Android Activity Recognition API][1]. It attempts to determine the user activity such as
 driving, walking, running and cycling. Possible detected activities are [listed here][2].
 
@@ -9,6 +11,9 @@ I would love to see a pull request that adds iOS support.
 [1]: https://developers.google.com/android/reference/com/google/android/gms/location/ActivityRecognition
 [2]: https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
 [3]: https://developer.apple.com/reference/coremotion/cmmotionactivity
+
+[npm shield]: https://img.shields.io/npm/v/react-native-activity-recognition.svg
+[npm url]: https://www.npmjs.com/package/react-native-activity-recognition
 
 ## Installation
 
