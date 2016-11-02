@@ -88,12 +88,11 @@ import ActivityRecognition from 'react-native-activity-recognition'
 ...
 
 // Start activity detection
-ActivityRecognition.start(1000) // detection interval in ms
+const detectionIntervalMillis = 1000
+ActivityRecognition.start(detectionIntervalMillis)
 
 // Subscribe to updates
-this.unsubscribe = ActivityRecognition.subscribe(detectedActivities => {
-  const mostProbable = ActivityRecognition.getMostProbableActivity(detectedActivities) // => { type: 'STILL', confidence: 77 }
-})
+this.unsubscribe = ActivityRecognition.subscribe(detectedActivities => { ... })
 
 ...
 
@@ -102,17 +101,24 @@ ActivityRecognition.stop()
 this.unsubscribe()
 ```
 
-`detectedActivities` is an object with keys for each detected activity, each of which have an integer value from 0 to 100
-indicating the likelihood that the user is performing this activity. For example:
+`detectedActivities` is an array of objects each representing a detected activity, sorted in descending order by confidence level. They have the following properties:
+- `type` string constant indicating the type of activity (see possible values below)
+- `confidence` integer from 0 to 100 (percentage) indicating the likelihood that the user is performing this activity
+
+`detectedActivities` could look like this:
 
 ```js
-{
-  ON_FOOT: 8,
-  IN_VEHICLE: 15,
-  WALKING: 8,
-  STILL: 77
-}
+[
+  { type: 'STILL', confidence: 77 },
+  { type: 'IN_VEHICLE', confidence: 15 },
+  { type: 'ON_FOOT', confidence: 8 },
+  { type: 'WALKING', confidence: 8 },
+]
 ```
+
+Because the activities are sorted by confidence level, the first value will be the one with the highest probability.
+Note that ON_FOOT and WALKING are related but won't always have the same value. I have never seen WALKING with a higher
+confidence than ON_FOOT, but it may happen that WALKING comes before ON_FOOT in the array if they have the same value.
 
 The following activity types are supported:
 
@@ -132,14 +138,10 @@ Starts listening for activity updates. The detectionIntervalMillis is passed to 
 
 ### `subscribe(callback: Function): Function`
 Subscribes a callback function to be invoked on each activity update. Returns a function which can be called in order to unsubscribe.
-The update callback will be invoked with an object representing the detected activities and their confidence percentage.
+The update callback will be invoked with an array of detected activities with their confidence percentage.
 
 ### `stop(): void`
 Stops listening for activity updates.
-
-### `getMostProbableActivity(detectedActivities: Object): Object`
-Util function to determine the most probable activity `type` and its `confidence` percentage based on the detectedActivities object used in the `subscribe` callback.
-For example: `{ type: 'STILL', confidence: 77 }`
 
 ## Credits / prior art
 
