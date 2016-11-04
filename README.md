@@ -36,7 +36,7 @@ Make alterations to the following files in your project:
 ```gradle
 ...
 include ':react-native-activity-recognition'
-project(':react-native-activity-recognition').projectDir = new File(settingsDir, '../node_modules/react-native-activity-recognition/android')
+project(':react-native-activity-recognition').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-activity-recognition/android')
 ...
 ```
 
