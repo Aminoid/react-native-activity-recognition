@@ -28,6 +28,7 @@
     "url": "https://github.com/XebiaStudio/react-native-activity-recognition/issues"
   },
   "devDependencies": {
+    "react": "^15.3.2",
     "react-native": "^0.35.0"
   }
 }
