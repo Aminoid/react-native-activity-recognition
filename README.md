@@ -167,14 +167,14 @@ import ActivityRecognition from 'react-native-activity-recognition'
 
 ...
 
-// Start activity detection
-const detectionIntervalMillis = 1000
-ActivityRecognition.start(detectionIntervalMillis)
-
 // Subscribe to updates
 this.subscribe = ActivityRecognition.subscribe(detectedActivities => {
 
 })
+
+// Start activity detection
+const detectionIntervalMillis = 1000
+ActivityRecognition.start(detectionIntervalMillis)
 
 ...
 
