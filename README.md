@@ -2,15 +2,13 @@
 
 [![npm version][npm shield]][npm url]
 
-React Native wrapper for the [Android Activity Recognition API][1]. It attempts to determine the user activity such as
-driving, walking, running and cycling. Possible detected activities are [listed here][2].
-
-Right now only Android devices are supported, but iOS support could be added using [CMMotionActivity][3].
-I would love to see a pull request that adds iOS support.
+React Native wrapper for the [Android Activity Recognition API][1] and [CMMotionActivity][3]. It attempts to determine the user activity such as
+driving, walking, running and cycling. Possible detected activities for android are [listed here][2] and for iOS are [listed here][3].
 
 [1]: https://developers.google.com/android/reference/com/google/android/gms/location/ActivityRecognition
 [2]: https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
 [3]: https://developer.apple.com/reference/coremotion/cmmotionactivity
+[4]: https://facebook.github.io/react-native/docs/linking-libraries-ios.html#manual-linking
 
 [npm shield]: https://img.shields.io/npm/v/react-native-activity-recognition.svg
 [npm url]: https://www.npmjs.com/package/react-native-activity-recognition
@@ -27,9 +25,11 @@ or with Yarn:
 yarn add react-native-activity-recognition
 ```
 
-### Linking
+## Linking
 
 Make alterations to the following files in your project:
+
+### Android
 
 #### `android/settings.gradle`
 
@@ -80,7 +80,14 @@ public class MainApplication extends Application implements ReactApplication {
 ...
 ```
 
+### iOS
+
+Follow Step 1 and Step 2 [listed here][4]
+
+
 ## Usage
+
+### Android
 
 ```js
 import ActivityRecognition from 'react-native-activity-recognition'
@@ -142,17 +149,61 @@ The following activity types are supported:
 - TILTING
 - UNKNOWN
 
-## Methods
+#### Methods
 
-### `start(detectionIntervalMillis: number): void`
+##### `start(detectionIntervalMillis: number): void`
 Starts listening for activity updates. The detectionIntervalMillis is passed to ActivityRecognitionApi.requestActivityUpdates().
 
-### `subscribe(callback: Function): Function`
+##### `subscribe(callback: Function): Function`
 Subscribes a callback function to be invoked on each activity update. Returns a function which can be called in order to unsubscribe.
 The update callback will be invoked with the detectedActivities object.
 
-### `stop(): void`
+##### `stop(): void`
 Stops listening for activity updates.
+
+### iOS
+```js
+import ActivityRecognition from 'react-native-activity-recognition'
+
+...
+
+// Start activity detection
+const detectionIntervalMillis = 1000
+ActivityRecognition.start(detectionIntervalMillis)
+
+// Subscribe to updates
+this.subscribe = ActivityRecognition.subscribe(detectedActivities => {
+
+})
+
+...
+
+// Stop activity detection and remove the listener
+ActivityRecognition.stop()
+```
+
+`detectedActivities` is an object with keys for each detected activity with the value of probable activity as true.
+
+The following activity types are supported:
+
+- RUNNING
+- WALKING
+- STATIONARY
+- AUTOMOTIVE
+- CYCLING
+- UNKNOWN
+
+#### Methods
+
+##### `start(detectionIntervalMillis: number): void`
+Starts listening for activity updates. The detectionIntervalMillis is passed to ActivityRecognitionApi.requestActivityUpdates().
+
+##### `subscribe(callback: Function): Function`
+Subscribes a callback function to be invoked on each activity update. The update callback will be invoked with the detectedActivities object.
+
+##### `stop(): void`
+Stops listening for activity updates and remove the listener.
+
 
 ## Credits / prior art
 
@@ -160,3 +211,4 @@ The following projects were very helpful in developing this library:
 
 - https://github.com/googlesamples/android-play-location
 - https://bitbucket.org/timhagn/react-native-google-locations
+- https://github.com/facebook/react-native/blob/master/Libraries/Geolocation

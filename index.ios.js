@@ -5,7 +5,7 @@ const { RNActivityRecognition } = NativeModules;
 const emitter = new NativeEventEmitter(RNActivityRecognition);
 var subscription = null;
 
-var Activity = {
+var ActivityRecognition = {
     test: function() {
         RNActivityRecognition.echo()
     },
@@ -16,11 +16,12 @@ var Activity = {
         subscription = emitter.addListener(
             "ActivityDetection",
             success
-        )
+        );
     },
     stop: function() {
-        RNActivityRecognition.stopActivity()
+        RNActivityRecognition.stopActivity();
+        subscription = null;
     }
 }
 
-module.exports = Activity;
+module.exports = ActivityRecognition;
