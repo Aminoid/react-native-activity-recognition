@@ -9,7 +9,7 @@ var ActivityRecognition = {
     start: function(time: number) {
         RNActivityRecognition.startActivity(time);
     },
-    unsubscribe: function(success: Function) {
+    subscribe: function(success: Function) {
         subscription = emitter.addListener(
             "ActivityDetection",
             activity => {
