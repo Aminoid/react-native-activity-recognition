@@ -19,8 +19,33 @@ float _timeout = 1.0;
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"ActivityDetection", @"ActivityFailure"];
+    return @[@"ActivityDetection"];
 }
+
+- (NSString *)generateAct: (CMMotionActivity *) activity {
+    if (activity.stationary) {
+        return @"STATIONARY";
+    }
+    
+    if (activity.walking) {
+        return @"WALKING";
+    }
+    
+    if (activity.running) {
+        return @"RUNNING";
+    }
+    
+    if (activity.automotive) {
+        return @"AUTOMOTIVE";
+    }
+    
+    if (activity.cycling) {
+        return @"CYCLING";
+    }
+    
+    return @"UNKNOWN";
+}
+
 
 - (void)activityManager
 {
@@ -31,27 +56,22 @@ float _timeout = 1.0;
     if ([CMMotionActivityManager isActivityAvailable]) {
         [self.motionActivityManager startActivityUpdatesToQueue: [NSOperationQueue mainQueue]
                                                     withHandler:^(CMMotionActivity *activity) {
+                                                        NSString *act;
+                                                        act = [self generateAct:activity];
                                                         _activityEvent = @{
-                                                                @"confidence": @(activity.confidence),
-                                                                @"stationary": @(activity.stationary),
-                                                                @"walking": @(activity.walking),
-                                                                @"running": @(activity.running),
-                                                                @"automotive": @(activity.automotive),
-                                                                @"cycling": @(activity.cycling),
-                                                                @"unknown": @(activity.unknown),
-                                                                };
+                                                            act: @(activity.confidence)
+                                                        };
                                                         [self sendEventWithName:@"ActivityDetection" body: _activityEvent];
                                                     }
          ];
     } else {
-        RCTLogInfo(@"Activity is Not Available");
-        [self sendEventWithName:@"ActivityFailure" body: @"This device does not support activity"];
+        RCTLogInfo(@"Activity is Not Available on this device.");
     }
 }
 
 RCT_EXPORT_METHOD(echo)
 {
-    RCTLogInfo(@"Pretending to create Activity manager with Aossie");
+    RCTLogInfo(@"The code is strong on this side.");
 }
 
 RCT_EXPORT_METHOD(startActivity:(float) time)
