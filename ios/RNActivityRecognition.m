@@ -69,11 +69,6 @@ float _timeout = 1.0;
     }
 }
 
-RCT_EXPORT_METHOD(echo)
-{
-    RCTLogInfo(@"The code is strong on this side.");
-}
-
 RCT_EXPORT_METHOD(startActivity:(float) time)
 {
     checkActivityConfig();
