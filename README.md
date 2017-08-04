@@ -27,12 +27,19 @@ yarn add react-native-activity-recognition
 
 ## Linking
 
+### Automatic
+
+`react-native link react-native-activity-recognition`
+
+IMPORTANT NOTE: You'll need to follow Step 4 for both iOS and Android of manual-linking
+
+### Manual
+
 Make alterations to the following files in your project:
 
-### Android
+#### Android
 
-#### `android/settings.gradle`
-
+1. Add following lines to `android/settings.gradle`
 ```gradle
 ...
 include ':react-native-activity-recognition'
@@ -40,8 +47,7 @@ project(':react-native-activity-recognition').projectDir = new File(rootProject.
 ...
 ```
 
-#### `android/app/build.gradle`
-
+2. Add the compile line to dependencies in `android/app/build.gradle`
 ```gradle
 ...
 dependencies {
@@ -51,8 +57,7 @@ dependencies {
 }
 ```
 
-#### `android/app/src/.../MainApplication.java`
-
+3. Add import and link the package in `android/app/src/.../MainApplication.java`
 ```java
 import com.xebia.activityrecognition.RNActivityRecognitionPackage;  // <--- add import
 
@@ -68,8 +73,7 @@ public class MainApplication extends Application implements ReactApplication {
     }
 ```
 
-#### `android/app/src/main/AndroidManifest.xml`
-
+4. Add activityrecognition service in `android/app/src/main/AndroidManifest.xml`
 ```xml
 ...
 <application ...>
@@ -80,23 +84,20 @@ public class MainApplication extends Application implements ReactApplication {
 ...
 ```
 
-### iOS
+#### iOS
 
-Follow Step 1 and Step 2 [listed here][4]
+1. In the XCode's "Project navigator", right click on your project's Libraries folder ➜ `Add Files to <...>`
+2. Go to `node_modules` ➜ `react-native-activity-recognition` ➜ `ios` ➜ select `RNActivityRecognition.xcodeproj`
+3. Add `RNActivityRecognition.a` to `Build Phases -> Link Binary With Libraries`
+4. Add `NSMotionUsageDescription` key to your `Info.plist` with strings describing why your app needs this permission
 
 
 ## Usage
-
-### Android
 
 ```js
 import ActivityRecognition from 'react-native-activity-recognition'
 
 ...
-
-// Start activity detection
-const detectionIntervalMillis = 1000
-ActivityRecognition.start(detectionIntervalMillis)
 
 // Subscribe to updates
 this.unsubscribe = ActivityRecognition.subscribe(detectedActivities => {
@@ -105,13 +106,20 @@ this.unsubscribe = ActivityRecognition.subscribe(detectedActivities => {
 
 ...
 
+// Start activity detection
+const detectionIntervalMillis = 1000
+ActivityRecognition.start(detectionIntervalMillis)
+
+...
+
 // Stop activity detection and remove the listener
 ActivityRecognition.stop()
 this.unsubscribe()
 ```
 
-`detectedActivities` is an object with keys for each detected activity, each of which have an integer percentage (0-100)
-indicating the likelihood that the user is performing this activity. For example:
+### Android
+
+`detectedActivities` is an object with keys for each detected activity, each of which have an integer percentage (0-100) indicating the likelihood that the user is performing this activity. For example:
 
 ```js
 {
@@ -134,7 +142,7 @@ confidence value:
 ]
 ```
 
-Because the activities are sorted by confidence level, the first value will be the one with the highest probability.
+Because the activities are sorted by confidence level, the first value will be the one with the highest probability
 Note that ON_FOOT and WALKING are related but won't always have the same value. I have never seen WALKING with a higher
 confidence than ON_FOOT, but it may happen that WALKING comes before ON_FOOT in the array if they have the same value.
 
@@ -149,40 +157,21 @@ The following activity types are supported:
 - TILTING
 - UNKNOWN
 
-#### Methods
-
-##### `start(detectionIntervalMillis: number): void`
-Starts listening for activity updates. The detectionIntervalMillis is passed to ActivityRecognitionApi.requestActivityUpdates().
-
-##### `subscribe(callback: Function): Function`
-Subscribes a callback function to be invoked on each activity update. Returns a function which can be called in order to unsubscribe.
-The update callback will be invoked with the detectedActivities object.
-
-##### `stop(): void`
-Stops listening for activity updates.
-
 ### iOS
+
+`detectedActivities` is an object with key to the detected activity with a confidence value for that activity given by CMMotionActivityManager. For example:
 ```js
-import ActivityRecognition from 'react-native-activity-recognition'
-
-...
-
-// Subscribe to updates
-this.subscribe = ActivityRecognition.subscribe(detectedActivities => {
-
-})
-
-// Start activity detection
-const detectionIntervalMillis = 1000
-ActivityRecognition.start(detectionIntervalMillis)
-
-...
-
-// Stop activity detection and remove the listener
-ActivityRecognition.stop()
+{
+    WALKING: 2
+}
 ```
 
-`detectedActivities` is an object with keys for each detected activity with the value of probable activity as true.
+`detectedActivities.sorted` getter will return it in the form of an array.
+```js
+[
+    {type: "WALKING", confidence: 2}
+]
+```
 
 The following activity types are supported:
 
@@ -192,18 +181,6 @@ The following activity types are supported:
 - AUTOMOTIVE
 - CYCLING
 - UNKNOWN
-
-#### Methods
-
-##### `start(detectionIntervalMillis: number): void`
-Starts listening for activity updates. The detectionIntervalMillis is passed to ActivityRecognitionApi.requestActivityUpdates().
-
-##### `subscribe(callback: Function): Function`
-Subscribes a callback function to be invoked on each activity update. The update callback will be invoked with the detectedActivities object.
-
-##### `stop(): void`
-Stops listening for activity updates and remove the listener.
-
 
 ## Credits / prior art
 
