@@ -65,7 +65,7 @@ float _timeout = 1.0;
                                                     }
          ];
     } else {
-        RCTLogInfo(@"Activity is Not Available on this device.");
+        RCTLogInfo(@"Motion data is not available on this device.");
     }
 }
 
@@ -101,6 +101,9 @@ static NSString* checkActivityConfig()
 #if RCT_DEV
     if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSMotionUsageDescription"]) {
         return @"NSMotionUsageDescription key must be present in Info.plist to use Activity Manager.";
+    }
+    if (![CMMotionActivityManager isActivityAvailable]) {
+        return @"Motion data is not available on this device.";
     }
 #endif
     return nil;
