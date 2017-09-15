@@ -31,9 +31,9 @@ function stop() {
   });
 }
 
-function logAndReject(reject, e) {
-  console.error(`[ActivityRecognition] Error: ${e}`)
-  reject(e)
+function logAndReject(reject, errorMsg) {
+  console.error(`[ActivityRecognition] Error: ${errorMsg}`)
+  reject(errorMsg)
 }
 
 module.exports = ActivityRecognition

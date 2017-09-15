@@ -69,31 +69,41 @@ float _timeout = 1.0;
     }
 }
 
-RCT_EXPORT_METHOD(startActivity:(float) time)
+RCT_EXPORT_METHOD(startActivity:(float)time callback:(RCTResponseSenderBlock)callback)
 {
-    checkActivityConfig();
+    NSString* errorMsg = checkActivityConfig(callback);
+    
+    if (errorMsg != nil) {
+        RCTLogError(@"%@", errorMsg);
+        callback(@[errorMsg]);
+        return;
+    }
+    
     _timeout = time/1000;
     RCTLogInfo(@"Starting Activity Detection");
     _timer = [NSTimer scheduledTimerWithTimeInterval: _timeout
                                               target:self selector:@selector(activityManager) userInfo:nil repeats:YES];
+    
+    callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(stopActivity)
+RCT_EXPORT_METHOD(stopActivity:(RCTResponseSenderBlock)callback)
 {
     RCTLogInfo(@"Stopping Activity Detection");
     [self.motionActivityManager stopActivityUpdates];
     [_timer invalidate];
+    
+    callback(@[[NSNull null]]);
 }
 
-static void checkActivityConfig()
+static NSString* checkActivityConfig()
 {
 #if RCT_DEV
     if (![[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSMotionUsageDescription"]) {
-        RCTLogError(@"NSMotionUsageDescription key must be present in Info.plist to use Activity Manager.");
+        return @"NSMotionUsageDescription key must be present in Info.plist to use Activity Manager.";
     }
 #endif
+    return nil;
 }
 
-
 @end
-  
