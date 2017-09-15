@@ -74,7 +74,7 @@ RCT_EXPORT_METHOD(startActivity:(float)time callback:(RCTResponseSenderBlock)cal
     NSString* errorMsg = checkActivityConfig(callback);
     
     if (errorMsg != nil) {
-        RCTLogError(@"%@", errorMsg);
+        NSLog(@"Error: %@", errorMsg);
         callback(@[errorMsg]);
         return;
     }

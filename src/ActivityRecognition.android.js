@@ -32,7 +32,8 @@ function stop() {
 }
 
 function logAndReject(reject, errorMsg) {
-  console.error(`[ActivityRecognition] Error: ${errorMsg}`)
+  // Don't log this as an error, because the client should handle it using `catch`.
+  console.log(`[ActivityRecognition] Error: ${errorMsg}`)
   reject(errorMsg)
 }
 
