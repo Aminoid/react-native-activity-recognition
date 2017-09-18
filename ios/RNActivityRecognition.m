@@ -46,6 +46,15 @@ float _timeout = 1.0;
     return @"UNKNOWN";
 }
 
+- (NSDictionary *)constantsToExport
+{
+    // Export a few common activity types to allow easier mocking.
+    return @{
+             @"IOS_STATIONARY": @"STATIONARY",
+             @"IOS_WALKING": @"WALKING",
+             @"IOS_AUTOMOTIVE": @"AUTOMOTIVE",
+             };
+}
 
 - (void)activityManager
 {
@@ -69,6 +78,19 @@ float _timeout = 1.0;
     }
 }
 
+- (void)mockActivityManager:(NSTimer *)timer
+{
+    // Receive the data.
+    NSString* mockActivity = timer.userInfo;
+    
+    if (mockActivity == nil) mockActivity = @"UNKNOWN";
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _activityEvent = @{ mockActivity: @100 };
+        [self sendEventWithName:@"ActivityDetection" body: _activityEvent];
+    });
+}
+
 RCT_EXPORT_METHOD(startActivity:(float)time callback:(RCTResponseSenderBlock)callback)
 {
     NSString* errorMsg = checkActivityConfig(callback);
@@ -83,6 +105,24 @@ RCT_EXPORT_METHOD(startActivity:(float)time callback:(RCTResponseSenderBlock)cal
     RCTLogInfo(@"Starting Activity Detection");
     _timer = [NSTimer scheduledTimerWithTimeInterval: _timeout
                                               target:self selector:@selector(activityManager) userInfo:nil repeats:YES];
+    
+    callback(@[[NSNull null]]);
+}
+
+RCT_EXPORT_METHOD(startMockedActivity:(float)time mockActivity:(NSString*)mockActivity callback:(RCTResponseSenderBlock)callback)
+{
+    _timeout = time/1000;
+    RCTLogInfo(@"Starting Mock Activity Detection");
+    _timer = [NSTimer scheduledTimerWithTimeInterval:_timeout
+                                              target:self selector:@selector(mockActivityManager:) userInfo:mockActivity repeats:YES];
+    
+    callback(@[[NSNull null]]);
+}
+
+RCT_EXPORT_METHOD(stopMockedActivity:(RCTResponseSenderBlock)callback)
+{
+    RCTLogInfo(@"Stopping Mock Activity Detection");
+    [_timer invalidate];
     
     callback(@[[NSNull null]]);
 }
