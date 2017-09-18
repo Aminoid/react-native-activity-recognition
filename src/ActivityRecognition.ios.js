@@ -6,11 +6,6 @@ const emitter = new NativeEventEmitter(RNActivityRecognition);
 var subscription = null;
 
 var ActivityRecognition = {
-  start: function(time: number) {
-    return new Promise((resolve, reject) => {
-      RNActivityRecognition.startActivity(time, logAndReject.bind(null, resolve, reject))
-    })
-  },
   subscribe: function(success: Function) {
     subscription = emitter.addListener(
       "ActivityDetection",
@@ -25,6 +20,11 @@ var ActivityRecognition = {
       }
     );
     return () => subscription.remove();
+  },
+  start: function(time: number) {
+    return new Promise((resolve, reject) => {
+      RNActivityRecognition.startActivity(time, logAndReject.bind(null, resolve, reject))
+    })
   },
   stop: function() {
     return new Promise((resolve, reject) => {
