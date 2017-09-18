@@ -3,6 +3,8 @@ const { ActivityRecognition } = NativeModules
 
 ActivityRecognition.subscribe = subscribe
 ActivityRecognition.start = start
+ActivityRecognition.startMocked = startMocked
+ActivityRecognition.stopMocked = stopMocked
 ActivityRecognition.stop = stop
 
 function subscribe(callback) {
@@ -22,6 +24,18 @@ function subscribe(callback) {
 function start(detectionIntervalMs) {
   return new Promise((resolve, reject) => {
     ActivityRecognition.startWithCallback(detectionIntervalMs, resolve, logAndReject.bind(null, reject))
+  });
+}
+
+function startMocked(detectionIntervalMs, mockActivityType) {
+  return new Promise((resolve, reject) => {
+    ActivityRecognition.startMockedWithCallback(detectionIntervalMs, mockActivityType, resolve, logAndReject.bind(null, reject))
+  });
+}
+
+function stopMocked() {
+  return new Promise((resolve, reject) => {
+    ActivityRecognition.stopMockedWithCallback(resolve, logAndReject.bind(null, reject))
   });
 }
 
