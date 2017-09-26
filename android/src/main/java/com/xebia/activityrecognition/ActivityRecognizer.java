@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
@@ -41,6 +42,7 @@ public class ActivityRecognizer implements ConnectionCallbacks, OnConnectionFail
     private boolean connected;
     private boolean started;
     private long interval;
+    private Timer mockTimer;
 
     public ActivityRecognizer(ReactApplicationContext reactContext) {
         mGoogleApiAvailability = GoogleApiAvailability.getInstance();
@@ -76,6 +78,30 @@ public class ActivityRecognizer implements ConnectionCallbacks, OnConnectionFail
                 getActivityDetectionPendingIntent()
             ).setResultCallback(this);
             started = true;
+        }
+    }
+
+    // Subscribe to mock activity updates.
+    public void startMocked(long detectionIntervalMillis, final int mockActivityType) {
+        mockTimer = new Timer();
+        mockTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                final ArrayList<DetectedActivity> detectedActivities = new ArrayList<>();
+                DetectedActivity detectedActivity = new DetectedActivity(mockActivityType, 100);
+                detectedActivities.add(detectedActivity);
+                onUpdate(detectedActivities);
+            }
+        }, 0, detectionIntervalMillis);
+
+        started = true;
+    }
+
+    // Unsubscribe from mock activity updates.
+    public void stopMocked() {
+        if (started) {
+            mockTimer.cancel();
+            started = false;
         }
     }
 
