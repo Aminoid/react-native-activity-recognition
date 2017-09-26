@@ -2,6 +2,8 @@ const { DeviceEventEmitter, NativeModules } = require('react-native')
 const { ActivityRecognition } = NativeModules
 
 ActivityRecognition.subscribe = subscribe
+ActivityRecognition.start = start
+ActivityRecognition.stop = stop
 
 function subscribe(callback) {
   const subscription = DeviceEventEmitter.addListener('DetectedActivity', detectedActivities => {
@@ -15,6 +17,24 @@ function subscribe(callback) {
     })
   })
   return () => DeviceEventEmitter.removeSubscription(subscription)
+}
+
+function start(detectionIntervalMs) {
+  return new Promise((resolve, reject) => {
+    ActivityRecognition.startWithCallback(detectionIntervalMs, resolve, logAndReject.bind(null, reject))
+  });
+}
+
+function stop() {
+  return new Promise((resolve, reject) => {
+    ActivityRecognition.stopWithCallback(resolve, logAndReject.bind(null, reject))
+  });
+}
+
+function logAndReject(reject, errorMsg) {
+  // Don't log this as an error, because the client should handle it using `catch`.
+  console.log(`[ActivityRecognition] Error: ${errorMsg}`)
+  reject(errorMsg)
 }
 
 module.exports = ActivityRecognition

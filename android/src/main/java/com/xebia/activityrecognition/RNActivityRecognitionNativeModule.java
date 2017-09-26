@@ -23,17 +23,32 @@ public class RNActivityRecognitionNativeModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void start(int detectionIntervalMillis) {
-        if (mActivityRecognizer == null) {
-            mActivityRecognizer = new ActivityRecognizer(mReactContext);
+    public void startWithCallback(int detectionIntervalMillis, final Callback onSuccess, final Callback onError) {
+        try {
+            if (mActivityRecognizer == null) {
+                mActivityRecognizer = new ActivityRecognizer(mReactContext);
+            }
+
+            mActivityRecognizer.start((long) detectionIntervalMillis);
+        } catch (Error e) {
+            onError.invoke(e.getMessage());
+            return;
         }
-        mActivityRecognizer.start(new Long(detectionIntervalMillis));
+
+        onSuccess.invoke();
     }
 
     @ReactMethod
-    public void stop() {
-        if (mActivityRecognizer != null) {
-            mActivityRecognizer.stop();
+    public void stopWithCallback(final Callback onSuccess, final Callback onError) {
+        try {
+            if (mActivityRecognizer != null) {
+                mActivityRecognizer.stop();
+            }
+        } catch (Error e) {
+            onError.invoke(e.getMessage());
+            return;
         }
+
+        onSuccess.invoke();
     }
 }

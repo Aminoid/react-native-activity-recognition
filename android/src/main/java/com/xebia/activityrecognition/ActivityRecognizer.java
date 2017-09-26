@@ -61,6 +61,10 @@ public class ActivityRecognizer implements ConnectionCallbacks, OnConnectionFail
 
     // Subscribe to activity updates. If not connected to Google Play Services, connect first and try again from the onConnected callback.
     public void start(long detectionIntervalMillis) {
+        if (mGoogleApiClient == null) {
+            throw new Error("No Google API client. Your device likely doesn't have Google Play Services.");
+        }
+
         interval = detectionIntervalMillis;
         if (!connected) {
             mGoogleApiClient.connect();
@@ -77,6 +81,10 @@ public class ActivityRecognizer implements ConnectionCallbacks, OnConnectionFail
 
     // Unsubscribe from activity updates and disconnect from Google Play Services. Also called when connection failed.
     public void stop() {
+        if (mGoogleApiClient == null) {
+            throw new Error("No Google API client. Your device likely doesn't have Google Play Services.");
+        }
+
         if (started) {
             ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
                 mGoogleApiClient,
