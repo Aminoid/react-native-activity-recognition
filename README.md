@@ -31,7 +31,7 @@ yarn add react-native-activity-recognition
 
 `react-native link react-native-activity-recognition`
 
-IMPORTANT NOTE: You'll need to follow Step 4 for both iOS and Android of manual-linking
+> **IMPORTANT NOTE:** You'll need to follow Step 4 for both iOS and Android of manual-linking
 
 ### Manual
 
