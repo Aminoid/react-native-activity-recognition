@@ -26,12 +26,11 @@ android {
     buildToolsVersion = "28.0.3"
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        supportLibVersion = "28.0.0"
     }
     lintOptions {
         abortOnError false
