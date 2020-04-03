@@ -84,6 +84,13 @@ public class MainApplication extends Application implements ReactApplication {
 </application>
 ...
 ```
+Also add the `ACTIVITY_RECOGNITION` permission on the manifest to support Android API Level above 28
+```xml
+<manifest ...>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    ...
+</manifest>
+```
 
 #### iOS
 
