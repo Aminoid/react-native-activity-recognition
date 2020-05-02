@@ -93,7 +93,8 @@ public class MainApplication extends Application implements ReactApplication {
 4. Add `NSMotionUsageDescription` key to your `Info.plist` with strings describing why your app needs this permission
 
 
-## Usage
+## Usage 
+### Class based implementation
 
 ```js
 import ActivityRecognition from 'react-native-activity-recognition'
@@ -116,6 +117,35 @@ ActivityRecognition.start(detectionIntervalMillis)
 // Stop activity detection and remove the listener
 ActivityRecognition.stop()
 this.unsubscribe()
+```
+
+### Hooks based implementation
+
+```js
+import ActivityRecognition from 'react-native-activity-recognition'
+
+...
+
+// Subscribe to updates on mount
+
+  useEffect(() => {
+    ActivityRecognition.subscribe(detectedActivities => {
+      const mostProbableActivity = detectedActivities.sorted[0];
+      console.log(mostProbableActivity);
+    });
+
+// Stop activity detection and remove the listener on unmount
+
+    return ActivityRecognition.stop();
+  });
+
+...
+
+// Start activity detection
+
+const detectionIntervalMillis = 1000
+ActivityRecognition.start(detectionIntervalMillis)
+
 ```
 
 ### Android
