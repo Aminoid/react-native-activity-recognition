@@ -1,10 +1,11 @@
 # react-native-activity-recognition
 
+
 [![npm version][npm shield]][npm url]
 
 React Native wrapper for the [Android Activity Recognition API][1] and [CMMotionActivity][3]. It attempts to determine the user activity such as
 driving, walking, running and cycling. Possible detected activities for android are [listed here][2] and for iOS are [listed here][3].<br/>
-Updated January 7th and tested with react-native v0.57.5
+Updated October 28th 2021 and tested with react-native v0.64 (Android)
 
 [1]: https://developers.google.com/android/reference/com/google/android/gms/location/ActivityRecognition
 [2]: https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
@@ -53,7 +54,7 @@ project(':react-native-activity-recognition').projectDir = new File(rootProject.
 ...
 dependencies {
     ...
-    compile project(':react-native-activity-recognition')
+    implementation project(':react-native-activity-recognition')
     ...
 }
 ```
@@ -74,15 +75,19 @@ public class MainApplication extends Application implements ReactApplication {
     }
 ```
 
-4. Add activityrecognition service in `android/app/src/main/AndroidManifest.xml`
+4. Add activityrecognition service in `android/app/src/main/AndroidManifest.xml`.
+Also add the `ACTIVITY_RECOGNITION` permission on the manifest to support Android API Level above 28
 ```xml
-...
-<application ...>
+<manifest ...>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <application ...>
+        ...
+        <service android:name="com.xebia.activityrecognition.DetectionService"/>
+        ...
+    </application>
     ...
-    <service android:name="com.xebia.activityrecognition.DetectionService"/>
-    ...
-</application>
-...
+</manifest>
+```
 ```
 
 #### iOS
